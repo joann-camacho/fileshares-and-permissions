@@ -14,33 +14,31 @@ This tutorial explains how to create file share folders for domain users and adm
 <h2>Operating Systems Used </h2>
 
 - Windows Server 2022 (DC-1)
-- Windows 10 (22H2) (Client-1)
+- Windows 10 (22H2) (Client-1) user name: box.cerula
 
 <h2>High-Level Deployment and Configuration Steps</h2>
 
 ***Prereqs: Create an Azure VM DC-1 (Windows Server 2022) and Create an Azure VM Client-1 (Windows 10 (22H2))***
 
-
-***Create
- - Step 1: Connect/log into DC-1 as your domain admin account (mydomain.com\jane_admin). Connect/log into Client-1 as a normal user (mydomain\<someuser>)
+ - Step 1: Connect/log into DC-1 as your domain admin account (mydomain.com\jane_admin). Connect/log into Client-1 as a normal user (mydomain\<box.cerula>)
  - Step 2: On DC-1, on the C:\ drive, create 4 folders: “read-access”, “write-access”, “no-access”, "accounting"
  - Step 3: Set the following permissions (share the folder). Folder: “read-access”, Group: “Domain Users”, Permission: “Read”. Folder: “write-access”,  Group: “Domain Users”, 
            Permissions: “Read/Write”. Folder: “no-access”, Group: “Domain Admins”, “Permissions: “Read/Write”
-   
-
+ - Step 4: Access file shares as a normal user (on Client-1 VM). On Client-1, navigate to the shared folder (start, run, \\dc-1). Try to access the folders you just created.
+ - Step 5: Create an “ACCOUNTANTS” Security Group in the Windows C: drive and assign permissions through the accountant's folder on explorer.
+ - Step 6: Test accounting access: Log out of Client-1 (user). Configure permission access on DC-1 for Client-1 (user) to be an 'ACCOUNTANTS member. Log back into Client-1 (as 
+           user).
 
 <h2>Deployment and Configuration Steps</h2>
 
-
-***Create some sample file shares with various permissions***
 <p>
 <p>
-Step 1: Open Remote Desktop and 'Log into' the DC-1 as your domain admin account (mydomain.com\jane_admin). Also, 'Log into' Client-1 as an admin (mydomain\jane_admin)
+Step 1: Open Remote Desktop and 'Log into' the DC-1 as your domain admin account (mydomain.com\jane_admin). Also, 'Log into' Client-1 as user (mydomain.com\box.cerula)
   
-![image](https://github.com/user-attachments/assets/7f8a7d70-c2ac-4d4d-8608-4b95372e4a18)
+![image](https://github.com/user-attachments/assets/2bab07bb-a3c6-4b81-83a0-243c9edb8abb)
 
 
-![image](https://github.com/user-attachments/assets/f07aa873-0ad7-41a4-ac6b-238969b79ff4)
+![image](https://github.com/user-attachments/assets/97e7b3cb-9535-42b0-a0c5-0ce7b758f97b)
 
 </p>
 
@@ -49,17 +47,18 @@ Step 1: Open Remote Desktop and 'Log into' the DC-1 as your domain admin account
 
 <p>
 
-Step 2: From Client-1, On "Type here to search" located on the bottom left corner next to the 'Windows icon', Type: Powershell. Select: 'run as administrator' and select 'Yes'.
+Step 2: On DC-1. Select the Windows icon, and select the 'File Explorer' file located on the 'Windows Server' panel.
 
-![image](https://github.com/user-attachments/assets/3efc85ac-a7b6-4bb7-a792-45533a528339)
+![image](https://github.com/user-attachments/assets/bd0d6b12-b023-44e6-898e-17962916ef07)
 
-       Type: (ping cherry) in PowerShell. Observe that it fails.(This is due to no DNS record)
+       On the DC-1. Select the 'This PC' file, select the 'Windows (C:)' file, use the Right-click option in the file to create a new folder. Select 'New", then select 'folder' 
 
-![image](https://github.com/user-attachments/assets/6e86d39d-687f-47a3-a7a0-bdf1e330477e)
+![image](https://github.com/user-attachments/assets/1b960365-13d6-44ca-8658-8ef8f1556ba7)
 
-       Type: (Nslookup “cherry”) and notice that it fails. (This is due to no DNS record) 
 
-![image](https://github.com/user-attachments/assets/9f04346a-b4b3-4f26-9873-50f910f9fd05)
+       create 4 folders: “read-access”, “write-access”, “no-access”, “accounting” 
+
+![image](https://github.com/user-attachments/assets/9fb44026-1c46-4d62-902a-d37f2c4d4eed)
 
 </p>
 
@@ -68,105 +67,95 @@ Step 2: From Client-1, On "Type here to search" located on the bottom left corne
 
 <p>
   
-Step 3: Select the 'Windows icon' at the bottom left corner. Select 'Windows Administrative Tools' and on the drop categories, select 'DNS'. The "DNS Manager" window appears. Select the 'DC-1' file, then select the 'Foward Lookup Zones'file, then select the 'mydomain.com' file. 
-
-![image](https://github.com/user-attachments/assets/c83062af-9dd2-4010-aa12-abd92ec7e611)
-
-      To (ping "cherry"), we need to create a DNS A-record on DC-1. Use right-click in the file screen and select ' New Host (A) or (AAA)...' 
-
-![Screen Shot 2025-01-09 at 2 13 43 PM](https://github.com/user-attachments/assets/2876e8dc-ff27-43e9-b551-c9b29255cbd3)
-
-      Under 'Name', type: cherry. Under 'IP Address' Type: 10.0.0.4 (DC-1’s Private IP address). Select the box 'Create associated pointer (PTR) record'. Click on 'Add Host'.
-
-![image](https://github.com/user-attachments/assets/67c7e507-cf2c-4812-b611-dda2f4de4978)
-
-      Observe the 'cherry' record has been added.
-![image](https://github.com/user-attachments/assets/c1e9f91e-ef0c-4784-b8d4-f2fa2d9bbc6f)
+Step 3: Set the following permissions to allow user's access folders. 
+       Folder: “read-access”, Group: “Domain Users”, Permission: “Read”
+       Folder: “write-access”,  Group: “Domain Users”, Permissions: “Read/Write”
+       Folder: “no-access”, Group: “Domain Admins”, “Permissions: “Read/Write”
 
 
-</p>
-<p>
+***(The instructions a-d will need to be repeated for the other folders according to step 3 instructions)***
 
-<br />
+READ-ACCESS FOLDER:
 
-<p>
-Step 4: Go back to Client-1 and try to (ping cherry). Observe that it works.
-</p>
-  
-![ping works](https://github.com/user-attachments/assets/bf351fa5-3948-4ae4-97b0-0dd9e083c22a)
+      a. Select the Folder: “read-access”, by right-clicking select the 'Properties' option. 
+![image](https://github.com/user-attachments/assets/6301baaa-352f-4c0d-abf6-03e6aea01bd3)
 
-</p>
+      b. Select the 'Sharing' tab. Select 'Share...'
+![image](https://github.com/user-attachments/assets/46705c70-c0d8-4b1a-a840-8be92d8700c2)
 
-<br />
+      c. Type “Domain Users” on the search menu. select 'Add'.
+![image](https://github.com/user-attachments/assets/64a347dd-3fab-4a55-8b9f-f700a73eaf55)
 
-***Attempt to access file shares as a normal user***
-
-<p>
-Step 1: Return to 'DNS Manager" by Selecting the Windows icon, and selecting the 'Windows Administrative Tools'. Select the 'DNS' option.
-        Select the 'DC-1' file, then select 'Foward Lookup Zones', and select 'mydomain.com'.
-        Double-click on the cherry a-record. Change the IP address to (8.8.8.8.) Select the box for 'Update associated pointer (PTR) record'. Hit 'Apply' and 'Ok'. View changes.
-</p>
-
-![changed IP ](https://github.com/user-attachments/assets/bc6c45b1-8dac-4885-80f3-de404e868a1f)
-
-![image](https://github.com/user-attachments/assets/d8c61d58-8a36-46c6-80d8-aa725d0e517e)
-
-  
-</p>
-
-<br />
-
-<p>
-Step 2: Go back to Client-1. Open Powershell (run as administrator). Type: ping “cherry”. Observe that it still pings the old (10.0.0.4) IP address. 
-  
-![image](https://github.com/user-attachments/assets/55b26964-cf31-4341-9822-34305e80a403)
-
-      This is due to the Local Cache stored on the host. To view this Type: "ipconfig /displaydns" in Powershell. Observe the cherry record's IP address is 10.0.0.4.
-
-![image](https://github.com/user-attachments/assets/12aa9271-9a68-49b7-9d88-d8481f1ed76c)
-
-</p>
-
-<br />
-<p>
-Step 3: In order to view the cherry a-record with it's updated (8.8.8.8) IP address, we must flush the DNS. Therefore, type: "ipconfig /flushdns" (again make sure you are in Powershell and running as administrator). Notice that it was flushed successfully.
-
-![image](https://github.com/user-attachments/assets/dabccc35-285b-47ca-9220-44057dbbd535)
-
-      Next, type: ping cherry. Notice that the cherry record IP address is now 8.8.8.8
-
-![image](https://github.com/user-attachments/assets/de3c5052-b79d-4bf6-a3be-3e143479c5b5)
-
-      Verify results type: "ipconfig /displaydns"
-
-![image](https://github.com/user-attachments/assets/65c393e7-68e8-4a44-8afd-c10538e6e0f7)
-           
-</p>
-
-<br />
-<p>
-
-***Create an “ACCOUNTANTS” Security Group, assign permissions, an test access***
-  
-</p>
-Step 1: Return to 'DNS Manager" by Selecting the Windows icon, and selecting the 'Windows Administrative Tools'. Select the 'DNS' option.
-        Select the 'DC-1' file, then select 'Foward Lookup Zones', and select 'mydomain.com'. Right-click on the screen and select 'New Alias (CNAME' option. 
-
-![image](https://github.com/user-attachments/assets/6529cf66-44b6-487f-b727-d6e6d5bab73b)
-
-      Next, under 'Alias name (uses parent domain if left blank)' type: 'search'. Under 'fully qualified domain name (FQDN) for target host' type: 'www.google.com'. Select, 'Ok'.
+      d. On the 'Permissions Level' menu, select 'Read'. Select 'Share'. Then select 'Done' and 'Close'.
+![image](https://github.com/user-attachments/assets/ecfeead9-9889-4329-8673-1fe05118379c)
       
-![image](https://github.com/user-attachments/assets/7ba93614-250d-430f-a524-be405f47e99e)
+WRITE-ACCESS FOLDER: (this image shows the final a-c steps)
 
-Step 2: Go back to Client-1. In Powershell attempt to Type: "ping search”, and observe the results of the CNAME record
+     d. On the 'Permissions Level' menu, select 'Read/Write'. Select 'Share'. Then select 'Done' and 'Close'.
+   ![image](https://github.com/user-attachments/assets/1ac423aa-3ff5-4a30-a0fc-c29cf2c7df58)
 
-![image](https://github.com/user-attachments/assets/b374e920-a058-4882-b9ee-df08dd20169d)
+NO-ACCESS FOLDER: (perform steps a and b)
 
-Step 3: On Client-1. In Powershell type: "nslookup search”, observe the results of the CNAME record. (IPv4 and IPv6 addresses for www.google.com are shown)
+     c. Type “Admin Users” on the search menu. select 'Add'. 
+![image](https://github.com/user-attachments/assets/d0eafa03-ba3f-4979-9f01-aa38f2c23abd)
 
-![image](https://github.com/user-attachments/assets/e22ef6d6-6749-45dc-a520-6d3c533c27ab)
+     d. On the 'Permissions Level' menu, select 'Read/Write'. Select 'Share'. Then select 'Done' and 'Close'.
+![image](https://github.com/user-attachments/assets/67f02b44-eac8-4028-816e-6583cca9f9ed)
 
-           
 </p>
 
+</p>
+<br />
+Step 4: On Client-1, navigate to the shared folder by selecting the 'Windows icon', right-click select 'run' option, type: '\\dc-1'
+
+![image](https://github.com/user-attachments/assets/19c2f239-7b0e-4591-a5ed-68160f4e701c)
+
+![image](https://github.com/user-attachments/assets/68cb751d-1d5d-4ade-97d6-0b5a061872e6)
+
+    Observe that the DC-1 files appear. Attempt to access all files. Notice the 'Network Error' pop-up window appears due to no domain user permission given. 
+
+![image](https://github.com/user-attachments/assets/37344d97-c755-48ac-9604-4ba62137c6c3)
+
+</p>
+
+</p>
+<br />
+
+Step 5: In DC-1, Select 'Windows icon', select the 'Windows Administrative Tools', select the 'Active Directory Users and Computers' option. Select and Right-click on '_Group', select 'New', then select the 'Group' option.
+
+![image](https://github.com/user-attachments/assets/9c688b0d-2501-4fbb-9c36-b04338388347)
+
+     Type: “ACCOUNTANTS” under the  Group name. Select 'Ok'.
+
+![image](https://github.com/user-attachments/assets/1bb79429-d893-4ccd-b444-ce9305ba0b87)
+
+     Return back to the Windows C: drive on 'File Explorer'. Select the 'accounting' folder. On its right-click menu, select 'properties', then select 'sharing' tab and click the 'share...' option.  Type: 'accountant' on the search menu, then select 'Add'.  
+     
+  ![image](https://github.com/user-attachments/assets/680150bf-0c13-4178-b35f-004fd9ca0df3)
+
+     To create permission, make sure the 'Permission Level' category selection is 'Read/Write'. Select 'Share', and 'Done' and 'Close'.
+     
+  ![image](https://github.com/user-attachments/assets/0a061b2e-55e2-47e8-8324-608f3b5b2113)
+</p>
+
+</p>
+<br />
+
+<p>
+Step 6: Log out of Client-1 (user: box.cerula). In 'Active Directory Users and Computers', select '_GROUP' file, then double-click the 'ACCOUNTANTS' folder. Select the 'memeber' tab, then select 'Add'. Type: (user name) 'box.cerula' in the description: 'Enter the objects name to select'. Select 'Check Names', then select 'ok'. Notice that the user name: box. cerula is listed. 
+ 
+![image](https://github.com/user-attachments/assets/ae60f0a0-f69f-4ec9-a8a7-17558c817e43)
+
+     Log back into Client-1 (user: box.cerula). Open 'File Explorer'. on the search menu type: '\\dc-1, and enter. 
+
+![image](https://github.com/user-attachments/assets/fc343945-b438-4e91-962f-6c4ade7636fd)
+
+     Double-click the 'accounting' folder to access it. Notice that it has access to the accounting folder. 
+
+![image](https://github.com/user-attachments/assets/4c3570d4-9aa2-48a6-9fd2-624ca1d81e06)
+
+
+</p>
+
+</p>
 <br />
